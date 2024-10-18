@@ -1,5 +1,5 @@
 import tkinter as tk
-
+import serial
 
 class Servo:
     """Represents a servo motor in the GUI."""
@@ -43,11 +43,18 @@ class Quadruped:
 
     def get_all_positions(self):
         """Get positions of all servos in the quadruped."""
-        pass
+        positions = []
+        for leg in self.legs:
+            positions.append(leg.knee.get_value())
+            positions.append(leg.hip.get_value())
+        return positions
 
     def set_all_positions(self, positions):
         """Set positions of all servos in the quadruped."""
-        pass
+        for i in range(len(self.legs)):
+            self.legs[i].knee.set_value(positions[i])
+            self.legs[i].hip.set_value(positions[i])
+
 
 class StateManager:
     """Manages saving and loading of robot states."""
@@ -76,17 +83,17 @@ class StateManager:
 class SerialCommunicator:
     """Handles serial communication with the Pico."""
 
-    def __init__(self, port='/dev/ttyACM0', baud_rate=115200):
+    def __init__(self, port='COM7', baud_rate=115200):
         """Initialize the serial connection."""
-        pass
+        self.ser = serial.Serial(port, baud_rate)
 
     def send_command(self, command):
         """Send a command to the Pico."""
-        pass
+        self.ser.write(f'{command}\n'.encode('utf-8'))
 
     def receive_data(self):
         """Receive data from the Pico."""
-        pass
+        return self.ser.readline().decode('utf-8')
 
 
 class QuadrupedGUI:
