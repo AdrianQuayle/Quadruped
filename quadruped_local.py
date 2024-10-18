@@ -1,4 +1,5 @@
 import tkinter as tk
+import json
 import serial
 
 class Servo:
@@ -61,23 +62,33 @@ class StateManager:
 
     def __init__(self):
         """Initialize the state manager."""
-        pass
+        self.states = {}
 
     def load_states(self, filename):
         """Load states from a file."""
-        pass
+        try:
+            with open(filename, 'r') as file:
+                self.states = json.load(file)
+        except FileNotFoundError:
+            self.states = {}
 
     def save_states(self, filename):
         """Save states to a file."""
-        pass
+        with open(filename, 'w') as file:
+            json.dump(self.states, file)
 
     def get_state(self, name):
         """Get a specific state by name."""
-        pass
+        return self.states.get(name)
 
     def set_state(self, name, state):
         """Set a specific state by name."""
-        pass
+        self.states[name] = state
+
+    def delete_state(self, name):
+        """Delete a specific state by name."""
+        if name in self.states:
+            del self.states[name]
 
 
 class SerialCommunicator:
