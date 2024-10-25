@@ -24,8 +24,8 @@ The code on the Pico listens for commands from the GUI and sets the angles of ea
 
 1. Clone this repository:
     ```bash
-    git clone <repository-url>
-    cd <repository-folder>
+    git clone https://github.com/AdrianQuayle/Quadruped/
+    cd Quadruped
     ```
 
 2. Install required packages:
@@ -35,7 +35,7 @@ The code on the Pico listens for commands from the GUI and sets the angles of ea
 
 3. Run the main GUI application:
     ```bash
-    python QuadrupedGUI.py
+    python quadruped_local.py
     ```
 
 4. For the Pico:
@@ -53,6 +53,7 @@ The code on the Pico listens for commands from the GUI and sets the angles of ea
 ```plaintext
 .
 ├── QuadrupedGUI.py        # Main GUI application
+├── states.json            # JSON states file
 ├── Pico/
 │   ├── boot.py              # Runs on Pico boot, imports main.py
 │   ├── main.py              # Handles servo control on the Pico
