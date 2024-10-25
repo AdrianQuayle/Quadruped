@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import simpledialog
 import json
 import serial
 
@@ -115,6 +116,9 @@ class QuadrupedGUI:
         self.root = root
         self.root.title("Quadruped Servo Control")
         self.quadruped = Quadruped(root)
+        self.state_manager = StateManager()
+        self.serial_comm = SerialCommunicator()
+        self.state_manager.load_states("states.json")
         self.create_gui()
 
     def create_gui(self):
@@ -125,18 +129,37 @@ class QuadrupedGUI:
         load_button.place(x=150, y=300)
         update_button = tk.Button(self.root, text="Update Pico", command=self.update_pico)
         update_button.place(x=250, y=300)
+        self.update_label = tk.Label(self.root, text="", fg="blue")
+        self.update_label.place(x=350, y=300)
 
     def update_pico(self):
         """Send updated positions to the Pico."""
-        pass
+        positions = self.quadruped.get_all_positions()
+        command = ""
+        for position in positions:
+            command += str(position) + ","
+        command = command.rstrip(",")
+        self.serial_comm.send_command(command)
+        print(command)
 
     def save_state(self):
-        """Save the current state of the robot."""
-        pass
+        """Save the current state of the robot with a given name."""
+        name = tk.simpledialog.askstring("Save State", "Enter the state name:")
+        if name:
+            self.state_manager.set_state(name, self.quadruped.get_all_positions())
+            self.state_manager.save_states("states.json")
+            self.update_label.config(text=f"'{name}' saved.")
 
     def load_state(self):
-        """Load the last saved state of the robot."""
-        pass
+        """Load a state of the robot by name."""
+        name = tk.simpledialog.askstring("Load State", "Enter the state name:")
+        if name:
+            state = self.state_manager.get_state(name)
+            if state:
+                self.quadruped.set_all_positions(state)
+                self.update_label.config(text=f"'{name}' loaded.")
+            else:
+                self.update_label.config(text=f"'{name}' not found.")
 
 
 if __name__ == "__main__":
