@@ -44,6 +44,10 @@ The code on the Pico listens for commands from the GUI and sets the angles of ea
 
 5. Connect the Pico to the system and identify its serial port (usually found in device manager or `ls /dev/tty*` on Linux). Adjust the port in the `SerialCommunicator` class if needed.
 
+![GUI Demonstration](assets/QuadrupedGUI.gif)
+![Quadruped Demonstration](assets/Quadruped.gif)
+
+
 ## Project Structure
 
 ```plaintext
