@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import simpledialog
 import json
 import serial
+import time
 
 class Servo:
     """Represents a servo motor in the GUI."""
@@ -53,9 +54,11 @@ class Quadruped:
 
     def set_all_positions(self, positions):
         """Set positions of all servos in the quadruped."""
-        for i in range(len(self.legs)):
-            self.legs[i].knee.set_value(positions[i])
-            self.legs[i].hip.set_value(positions[i])
+        index = 0
+        for leg in self.legs:
+            leg.knee.set_value(positions[index])
+            leg.hip.set_value(positions[index + 1])
+            index += 2
 
 
 class StateManager:
@@ -129,6 +132,12 @@ class QuadrupedGUI:
         load_button.place(x=150, y=300)
         update_button = tk.Button(self.root, text="Update Pico", command=self.update_pico)
         update_button.place(x=250, y=300)
+        stand_button = tk.Button(self.root, text="Stand", command=self.stand)
+        stand_button.place(x=50, y=350)
+        sit_button = tk.Button(self.root, text="Sit", command=self.sit)
+        sit_button.place(x=108, y=350)
+        wave_button = tk.Button(self.root, text="Wave", command=self.wave)
+        wave_button.place(x=150, y=350)
         self.update_label = tk.Label(self.root, text="", fg="blue")
         self.update_label.place(x=350, y=300)
 
@@ -160,6 +169,49 @@ class QuadrupedGUI:
                 self.update_label.config(text=f"'{name}' loaded.")
             else:
                 self.update_label.config(text=f"'{name}' not found.")
+
+    def stand(self):
+        """Set the robot to the 'stand' state."""
+        state = self.state_manager.get_state("stand")
+        self.quadruped.set_all_positions(state)
+        self.update_label.config(text=f"Stand loaded.")
+
+        self.update_pico()
+
+    def sit(self):
+        """Set the robot to the 'stand' state."""
+        state = self.state_manager.get_state("sit")
+        self.quadruped.set_all_positions(state)
+        self.update_label.config(text=f"Sit loaded.")
+
+        self.update_pico()
+
+    def wave(self):
+        """Command the robot to wave"""
+        stand = self.state_manager.get_state("stand")
+        wave1 = self.state_manager.get_state("wave1")
+        wave2 = self.state_manager.get_state("wave2")
+        wave3 = self.state_manager.get_state("wave3")
+
+        self.quadruped.set_all_positions(stand)
+        self.update_pico()
+        time.sleep(0.5)
+
+        self.quadruped.set_all_positions(wave1)
+        self.update_pico()
+        time.sleep(0.5)
+
+        for i in range(4):
+            self.quadruped.set_all_positions(wave2)
+            self.update_pico()
+            time.sleep(0.2)
+
+            self.quadruped.set_all_positions(wave3)
+            self.update_pico()
+            time.sleep(0.2)
+
+        self.quadruped.set_all_positions(stand)
+        self.update_pico()
 
 
 if __name__ == "__main__":
